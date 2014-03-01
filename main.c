@@ -14,7 +14,7 @@ int main(void) {
 
 	// buffer to store encoded transport data
 	uint8_t frameBuffer[(ENCODING * sizeof(ledcolor_t) * NUMBEROFLEDS)] = { 0, };
-
+/*
 	// array with 15 rbg colors
 	ledcolor_t leds[NUMBEROFLEDS] = {
 			{ 0xFF, 0x00, 0x00 },
@@ -33,11 +33,11 @@ int main(void) {
 			{ 0x00, 0x0F, 0x00 },
 			{ 0x00, 0x00, 0x0F },
 	};
-
-	uint8_t update;
+*/
+	//uint8_t update;
 	ledcolor_t blankLed = {0x00, 0x00, 0x00};
 	uint8_t colorIdx;
-	ledcolor_t led = {0,0,0};
+	ledcolor_t led;
 
 	WDTCTL = WDTPW | WDTHOLD;	// Stop watchdog timer
 
@@ -50,14 +50,17 @@ int main(void) {
 		fillFrameBufferSingleColor(&blankLed, NUMBEROFLEDS, frameBuffer, ENCODING);
 		sendBuffer(frameBuffer, NUMBEROFLEDS);
 		__delay_cycles(0xFFFFF);
-
+/*
 		// set one LED after an other (one more with each round) with the colors from the LEDs array
 		fillFrameBuffer(leds, NUMBEROFLEDS, frameBuffer, ENCODING);
 		for(update=1; update <= NUMBEROFLEDS; update++) {
 			sendBuffer(frameBuffer, update);
 			__delay_cycles(0xFFFFF);
 		}
-
+*/
+		led.red = 0;
+		led.green = 0;
+		led.blue = 0;
 		// set all LEDs with the same color and simulate a sunrise
 		for(colorIdx=0; colorIdx < 0xFF; colorIdx++) {
 			led.red = colorIdx + 1;
@@ -77,7 +80,7 @@ int main(void) {
 			sendBuffer(frameBuffer, NUMBEROFLEDS);
 			__delay_cycles(0x3FFFF);
 		}
-		_nop();
+		__delay_cycles(0xFFFFF);
 	}
 	return 0;
 }

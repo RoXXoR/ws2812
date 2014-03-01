@@ -64,7 +64,7 @@ void fillFrameBufferSingleColor(ledcolor_t* led, ledcount_t ledCount, uint8_t* b
  *	 	 	 	__
  * ONE : 110	  |_
  *
- * the bti in the middle defines the value
+ * the bit   in the middle defines the value
  *
  * data stream: 0x23		 		 0  0  1  0  0  0  1  1
  * encoding:						1x01x01x01x01x01x01x01x0
@@ -151,7 +151,7 @@ void encodeData3bit(ledcolor_t* led, uint8_t* output) {
  */
 #define ZEROPATTERN		0x8	// 4-bit
 #define ONEPATTERN		0xE	// 4-bit
-															//			_     _
+													 		//			_     _
 #define ZEROZEROPATTERN ((ZEROPATTERN<<4) | ZEROPATTERN)	// 10001000  |___| |___
 															//			_     ___
 #define ZEROONEPATTERN  ((ZEROPATTERN<<4) |  ONEPATTERN)	// 10001110  |___|   |_
