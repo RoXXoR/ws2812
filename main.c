@@ -56,7 +56,7 @@ int main(void) {
 		// set one LED after an other (one more with each round) with the colors from the LEDs array
 		fillFrameBuffer(leds, NUMBEROFLEDS, frameBuffer, ENCODING);
 		for(update=1; update <= NUMBEROFLEDS; update++) {
-			sendBuffer(frameBuffer, update);
+			sendBufferDma(frameBuffer, update);
 			__delay_cycles(0xFFFFF);
 		}
 		__delay_cycles(0xFFFFFF);
@@ -79,7 +79,7 @@ int main(void) {
 		for(colorIdx=0; colorIdx < 0x50; colorIdx++) {
 			led.blue = colorIdx;
 			fillFrameBufferSingleColor(&led, NUMBEROFLEDS, frameBuffer, ENCODING);
-			sendBuffer(frameBuffer, NUMBEROFLEDS);
+			sendBufferDma(frameBuffer, NUMBEROFLEDS);
 			__delay_cycles(0x3FFFF);
 		}
 		__delay_cycles(0xFFFFF);
