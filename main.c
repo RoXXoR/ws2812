@@ -8,6 +8,7 @@
 void configClock(void);
 void configSPI(void);
 void sendBuffer(uint8_t* buffer, ledcount_t ledCount);
+void sendBufferDma(uint8_t* buffer, ledcount_t ledCount);
 
 
 int main(void) {
@@ -48,7 +49,7 @@ int main(void) {
 
 		// blank all LEDs
 		fillFrameBufferSingleColor(&blankLed, NUMBEROFLEDS, frameBuffer, ENCODING);
-		sendBuffer(frameBuffer, NUMBEROFLEDS);
+		sendBufferDma(frameBuffer, NUMBEROFLEDS);
 		__delay_cycles(0xFFFFF);
 /*
 		// set one LED after an other (one more with each round) with the colors from the LEDs array
@@ -63,13 +64,13 @@ int main(void) {
 		for(colorIdx=0; colorIdx < 0xFF; colorIdx++) {
 			led.red = colorIdx + 1;
 			fillFrameBufferSingleColor(&led, NUMBEROFLEDS, frameBuffer, ENCODING);
-			sendBuffer(frameBuffer, NUMBEROFLEDS);
+			sendBufferDma(frameBuffer, NUMBEROFLEDS);
 			__delay_cycles(0x1FFFF);
 		}
 		for(colorIdx=0; colorIdx < 0xD0; colorIdx++) {
 			led.green = colorIdx;
 			fillFrameBufferSingleColor(&led, NUMBEROFLEDS, frameBuffer, ENCODING);
-			sendBuffer(frameBuffer, NUMBEROFLEDS);
+			sendBufferDma(frameBuffer, NUMBEROFLEDS);
 			__delay_cycles(0x2FFFF);
 		}
 		for(colorIdx=0; colorIdx < 0x50; colorIdx++) {
@@ -93,6 +94,19 @@ void sendBuffer(uint8_t* buffer, ledcount_t ledCount) {
 		UCA0TXBUF_L = buffer[bufferIdx];
 	}
 	__delay_cycles(300);
+}
+
+void sendBufferDma(uint8_t* buffer, ledcount_t ledCount) {
+	DMA0SA = (__SFR_FARPTR) buffer;		// source address
+	DMA0DA = (__SFR_FARPTR) &UCA0TXBUF_L;	// destination address
+	// single transfer, source increment, source and destination byte access, interrupt enable
+	DMACTL0 = DMA0TSEL__UCA0TXIFG;		// DMA0 trigger input
+	DMA0SZ = (ENCODING * sizeof(ledcolor_t) * ledCount);
+	DMA0CTL = DMADT_0 | DMASRCINCR_3 | DMASRCBYTE | DMADSTBYTE | DMAEN; //| DMAIE;
+
+	//start DMA
+	UCA0IFG ^= UCTXIFG;
+	UCA0IFG ^= UCTXIFG;
 }
 
 // configure MCLK and SMCLK to be sourced by DCO with a frequency of
