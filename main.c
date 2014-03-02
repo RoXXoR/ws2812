@@ -58,9 +58,7 @@ int main(void) {
 			__delay_cycles(0xFFFFF);
 		}
 */
-		led.red = 0;
-		led.green = 0;
-		led.blue = 0;
+		led = blankLed;
 		// set all LEDs with the same color and simulate a sunrise
 		for(colorIdx=0; colorIdx < 0xFF; colorIdx++) {
 			led.red = colorIdx + 1;
