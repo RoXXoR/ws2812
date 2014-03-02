@@ -9,6 +9,7 @@ void configClock(void);
 void configSPI(void);
 void sendBuffer(uint8_t* buffer, ledcount_t ledCount);
 void sendBufferDma(uint8_t* buffer, ledcount_t ledCount);
+void shiftLed(ledcolor_t* leds, ledcount_t ledCount);
 
 
 int main(void) {
@@ -47,12 +48,13 @@ int main(void) {
 	configSPI();
 
 	while(1) {
-
+		// Animation - Part2
 		// blank all LEDs
 		fillFrameBufferSingleColor(&blankLed, NUMBEROFLEDS, frameBuffer, ENCODING);
 		sendBufferDma(frameBuffer, NUMBEROFLEDS);
 		__delay_cycles(0xFFFFF);
 
+		// Animation - Part1
 		// set one LED after an other (one more with each round) with the colors from the LEDs array
 		fillFrameBuffer(leds, NUMBEROFLEDS, frameBuffer, ENCODING);
 		for(update=1; update <= NUMBEROFLEDS; update++) {
@@ -60,8 +62,15 @@ int main(void) {
 			__delay_cycles(0xFFFFF);
 		}
 		__delay_cycles(0xFFFFFF);
-
-
+		// Animation - Part2
+		// shift previous LED pattern
+		for(update=0; update < 0xFF; update++) {
+			shiftLed(leds, NUMBEROFLEDS);
+			fillFrameBuffer(leds, NUMBEROFLEDS, frameBuffer, ENCODING);
+			sendBufferDma(frameBuffer, NUMBEROFLEDS);
+			__delay_cycles(0x7FFFF);
+		}
+		// Animation - Part3
 		led = blankLed;
 		// set all LEDs with the same color and simulate a sunrise
 		for(colorIdx=0; colorIdx < 0xFF; colorIdx++) {
@@ -87,6 +96,16 @@ int main(void) {
 	return 0;
 }
 
+void shiftLed(ledcolor_t* leds, ledcount_t ledCount) {
+	ledcolor_t tmpLed;
+	ledcount_t ledIdx;
+
+	tmpLed = leds[ledCount-1];
+	for(ledIdx=(ledCount-1); ledIdx > 0; ledIdx--) {
+		leds[ledIdx] = leds[ledIdx-1];
+	}
+	leds[0] = tmpLed;
+}
 
 // copy bytes from the buffer to SPI transmit register
 // should be reworked to use DMA
