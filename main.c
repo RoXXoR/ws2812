@@ -52,7 +52,7 @@ int main(void) {
 		// blank all LEDs
 		fillFrameBufferSingleColor(&blankLed, NUMBEROFLEDS, frameBuffer, ENCODING);
 		sendBufferDma(frameBuffer, NUMBEROFLEDS);
-		__delay_cycles(0xFFFFF);
+		__delay_cycles(0x100000);
 
 		// Animation - Part1
 		// set one LED after an other (one more with each round) with the colors from the LEDs array
@@ -64,7 +64,7 @@ int main(void) {
 		__delay_cycles(0xFFFFFF);
 		// Animation - Part2
 		// shift previous LED pattern
-		for(update=0; update < 0xFF; update++) {
+		for(update=0; update < 15*8; update++) {
 			shiftLed(leds, NUMBEROFLEDS);
 			fillFrameBuffer(leds, NUMBEROFLEDS, frameBuffer, ENCODING);
 			sendBufferDma(frameBuffer, NUMBEROFLEDS);
