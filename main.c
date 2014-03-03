@@ -48,7 +48,6 @@ int main(void) {
 	configSPI();
 
 	while(1) {
-		// Animation - Part2
 		// blank all LEDs
 		fillFrameBufferSingleColor(&blankLed, NUMBEROFLEDS, frameBuffer, ENCODING);
 		sendBufferDma(frameBuffer, NUMBEROFLEDS);
